@@ -71,15 +71,17 @@ class Particles {
   };
 
   //system constants
-  double sphere_radius = 0.05;
+  double sphere_radius = 0.15;
   double sphere_volume = 4.0 / 3.0 * 3.1417 * pow(sphere_radius, 3);
   double ext_density = 1.0;
+  double du_density = 0.00001;
+  double dd_density = 0.00001;
   double delta_t = 0.1;
   double damping = 0.1;
   double mass = 1.0;
   double friction = 0.1;
   double SURFACE_OFFSET = 0.00001;
-  double ks = 0.0000001;
+  double ks = 0.00002;
   double dist_thresh = 0.3;
   
   glm::dvec3 gravity = glm::dvec3(0.0,-50,0.0);

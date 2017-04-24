@@ -25,7 +25,7 @@ Particles::Particles(int nx, int ny, int nz, float d)
 	      //p.pos = glm::dvec3((x+0.5-nx*0.5)*d, (y+0.5)*d-1.0, (z+0.5-nz*0.5)*d);
 	      p.pos = glm::dvec3((double)rand() / RAND_MAX - nx*0.5*d, (double)rand() / RAND_MAX * 1.5  - ny*0.5*d + lower_plane.origin.y * 0.5 , (double)rand() / RAND_MAX  - nz*0.5*d );
 	      p.last_pos = p.pos;
-	      p.mass = sphere_volume * density(p);
+	      p.mass = sphere_volume * ext_density;//density(p);
 	      particles.push_back(p);
             }
         }
@@ -53,7 +53,26 @@ void Particles::render() const
   glColor3f(0.9, 0.9, 0.9);
   glColorMaterial(GL_FRONT, GL_AMBIENT);
   glColor3f(0.2, 0.5, 0.8);
-    
+
+  /*draw the two disk extremities*/
+  glPushMatrix();
+  glTranslatef(lower_plane.origin.x, lower_plane.origin.y, lower_plane.origin.z);
+  glRotatef(90.0, 1.0, 0.0, 0.0);
+  GLUquadricObj* quad_bot = gluNewQuadric();
+  gluDisk(quad_bot, 0.0, 1.5  + sphere_radius, 64, 1);
+  gluDeleteQuadric(quad_bot);
+  glPopMatrix();
+
+  glPushMatrix();
+  glTranslatef(upper_plane.origin.x, upper_plane.origin.y, upper_plane.origin.z);
+  glRotatef(90.0, 1.0, 0.0, 0.0);
+  GLUquadricObj* quad_top = gluNewQuadric();
+  gluDisk(quad_top, 0.0, 1.5 + sphere_radius,64, 1);
+  gluDeleteQuadric(quad_top);
+  glPopMatrix();
+  
+  
+  
   for(const Particle &par : particles)
     {    
         
@@ -100,25 +119,6 @@ void Particles::step()
     }
   }
 
-
-  // TODO (Part 4): Handle self-collisions.
-  // This won't do anything until you complete Part 4.
-  build_spatial_map();
-  
-  /*for (Particle &p : particles) {
-    self_collide(p, 0.1);
-    }*/
-  
-  //collisions
-  for (Particle &p : particles){
-    cylinder_collision(cylinder, p);
-    plane_collision(lower_plane, p);
-    plane_collision(upper_plane, p);
-    
-  }
-
-  
-
   //verlet integration
 
   for(Particle &p : particles){    
@@ -129,12 +129,32 @@ void Particles::step()
     p.last_pos = curpos;
   }
 
+
+  //self collisions
+  build_spatial_map();
+  
+  for (Particle &p : particles) {
+    self_collide(p, 100);
+    }
+  
+  //collisions with cylinder and bottom/top plane
+  for (Particle &p : particles){
+    cylinder_collision(cylinder, p);
+    plane_collision(lower_plane, p);
+    plane_collision(upper_plane, p);
+    
+  }
+
+  
+
+  
+
   
 
   //update the mass of the particles
 
   for (Particle &p : particles){
-    p.mass = sphere_volume * density(p);
+    p.mass += sphere_volume * density(p);
   }
   
 }
@@ -161,13 +181,16 @@ void Particles::build_spatial_map() {
 }
 
 void Particles::self_collide(Particle &p, double simulation_steps) {
-  // TODO (Part 4): Handle self-collision for a given point mass.
   //cout<<"what"<<endl;
   float hash_val = hash_position(p.pos);
-  double thickness = 0.1;
   
   vector<Particle *> *points = map[hash_val];
 
+  if (points == nullptr){
+    //cout<<"why though?"<<endl;
+    return;
+  }
+  
   glm::dvec3 corrs;
   int ncorrs = 0;
   for (auto ps : *points){
@@ -175,9 +198,9 @@ void Particles::self_collide(Particle &p, double simulation_steps) {
       continue;
     }
     glm::dvec3 delta_p = ps->pos - p.pos;
-    if (glm::length(delta_p) < 2.0 * thickness){
+    if (glm::length(delta_p) < 2.0 * sphere_radius){
       ncorrs++;
-      corrs += -glm::normalize(delta_p) * (2.0 * thickness - glm::length(delta_p));
+      corrs += -glm::normalize(delta_p) * (2.0 * sphere_radius - glm::length(delta_p));
     }
     
   }
@@ -186,15 +209,13 @@ void Particles::self_collide(Particle &p, double simulation_steps) {
     corrs = corrs * (1.0 / ncorrs / simulation_steps);
     p.pos += corrs;
   }
-  cout<<"what"<<endl;
+  //cout<<"what"<<endl;
   //cout<<"whats"<<endl;  
 
 }
 
 float Particles::hash_position(glm::dvec3 pos) {
-  // TODO (Part 4): Hash a 3D position into a unique float identifier that represents
-  // membership in some uniquely identified 3D box volume.
-
+ 
   int width = 5.0;
   int height = 5.0;
   int num_width_points = 100;
@@ -243,7 +264,12 @@ void Particles::cylinder_collision(Cylinder &cy, Particle &p){
 
 //force functions
 double Particles::density(Particle &p){
-  return 1.0 + p.pos.y / (upper_plane.origin.y - lower_plane.origin.y); //2.0 = distance of the planes from origin in y direction
+  if (p.pos.y - lower_plane.origin.y <= 1.0 / 8.0 * (upper_plane.origin.y - lower_plane.origin.y)){
+    return - du_density;
+  }else{
+    return  dd_density;
+  }
+  //return 1.0 + p.pos.y / (upper_plane.origin.y - lower_plane.origin.y); //2.0 = distance of the planes from origin in y direction
   //thus varies between 0.5 at lower end of the plane and 1.5 at top end of the plane
 }
 

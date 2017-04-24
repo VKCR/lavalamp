@@ -27,7 +27,7 @@ int frame = 0;
 const int render_step = 3;
 int mx, my;
 
-Particles particles(10,10,10,0.2);
+Particles particles(5,5,5,0.3);
 
 void display(void);
 
