@@ -92,13 +92,22 @@ void Particles::step()
       double d = glm::length(p1.pos - p2.pos);
       //if (d <= dist_thresh){
       //p1.force += ks * glm::normalize(p2.pos - p1.pos);// * pow(1.0 / d, 2);
-      if (d < 0.005)
-	p1.force += ks * glm::normalize(p2.pos - p1.pos) * pow(1.0 / 0.005, 2);
+      if (d < 0.03)
+	p1.force += ks * glm::normalize(p2.pos - p1.pos) * pow(1.0 / 0.03, 2);
       else
 	p1.force += ks * glm::normalize(p2.pos - p1.pos) * pow(1.0 / d, 2);
 	//}
     }
   }
+
+
+  // TODO (Part 4): Handle self-collisions.
+  // This won't do anything until you complete Part 4.
+  build_spatial_map();
+  
+  /*for (Particle &p : particles) {
+    self_collide(p, 0.1);
+    }*/
   
   //collisions
   for (Particle &p : particles){
@@ -107,6 +116,8 @@ void Particles::step()
     plane_collision(upper_plane, p);
     
   }
+
+  
 
   //verlet integration
 
@@ -126,6 +137,83 @@ void Particles::step()
     p.mass = sphere_volume * density(p);
   }
   
+}
+
+
+void Particles::build_spatial_map() {
+  map.clear();
+  float hash_val;
+  int count = 0;
+  for (auto &p : particles){
+    hash_val = hash_position(p.pos);
+    vector<Particle *> *points = map[hash_val];
+    if (points == nullptr){ //new key
+      points = new vector<Particle *>();
+      points->push_back(&p);
+      map[hash_val] = points;
+    }
+    else{
+      points->push_back(&p);
+    }
+  }
+
+
+}
+
+void Particles::self_collide(Particle &p, double simulation_steps) {
+  // TODO (Part 4): Handle self-collision for a given point mass.
+  //cout<<"what"<<endl;
+  float hash_val = hash_position(p.pos);
+  double thickness = 0.1;
+  
+  vector<Particle *> *points = map[hash_val];
+
+  glm::dvec3 corrs;
+  int ncorrs = 0;
+  for (auto ps : *points){
+    if (&p == ps){
+      continue;
+    }
+    glm::dvec3 delta_p = ps->pos - p.pos;
+    if (glm::length(delta_p) < 2.0 * thickness){
+      ncorrs++;
+      corrs += -glm::normalize(delta_p) * (2.0 * thickness - glm::length(delta_p));
+    }
+    
+  }
+  if (ncorrs > 0){
+    
+    corrs = corrs * (1.0 / ncorrs / simulation_steps);
+    p.pos += corrs;
+  }
+  cout<<"what"<<endl;
+  //cout<<"whats"<<endl;  
+
+}
+
+float Particles::hash_position(glm::dvec3 pos) {
+  // TODO (Part 4): Hash a 3D position into a unique float identifier that represents
+  // membership in some uniquely identified 3D box volume.
+
+  int width = 5.0;
+  int height = 5.0;
+  int num_width_points = 100;
+  int num_height_points = 100;
+  
+  double w = 3.0 * width / num_width_points;
+  double h = 3.0 * height / num_height_points;
+  double t = max(w,t);
+
+  //cout<<w<<endl<<h<<endl<<t<<endl;
+  //cout<<pos.x<<endl<<pos.y<<endl<<pos.z<<endl;
+
+  //Vector3D bbox_index = Vector3D(fmod(pos.x,w) + 1, fmod(pos.y, h) + 1, fmod(pos.z, t) + 1);
+  glm::dvec3 bbox_index = glm::dvec3(floor(pos.x/w) , floor(pos.y/h) , floor(pos.z/t) );
+
+  //cout<<bbox_index<<endl<<endl;
+  //return 0;
+  
+  return abs(bbox_index.x)*1.0  + abs(bbox_index.y)*0.00001 + abs(bbox_index.z)*0.00000001;
 }
 
 

@@ -16,6 +16,8 @@
 
 #include <glm/glm.hpp>
 #include <vector>
+#include <unordered_set>
+#include <unordered_map>
 #include <iostream>
 #include <random>
 #if defined(__APPLE_CC__)
@@ -77,7 +79,7 @@ class Particles {
   double mass = 1.0;
   double friction = 0.1;
   double SURFACE_OFFSET = 0.00001;
-  double ks = 0.00000001;
+  double ks = 0.0000001;
   double dist_thresh = 0.3;
   
   glm::dvec3 gravity = glm::dvec3(0.0,-50,0.0);
@@ -87,15 +89,18 @@ class Particles {
   glm::dvec3 buoyancy(Particle &p);
   void plane_collision(Plane &pl, Particle &p);
   void cylinder_collision(Cylinder &cy, Particle &p);
-  
-
+  void build_spatial_map();
+  void self_collide(Particle &p, double simulation_steps);
+  float hash_position(glm::dvec3 pos);
   //data structures
   std::vector<Particle> particles;
   std::vector<Link> links;
+  unordered_map<float, vector<Particle *> *> map;
   //boundaries
   Plane lower_plane = Plane(glm::dvec3(0.0,-5.0,0.0), glm::dvec3(0.0,1.0,0.0));
   Plane upper_plane = Plane(glm::dvec3(0.0,5.0,0.0), glm::dvec3(0.0,-1.0,0.0));
   Cylinder cylinder = Cylinder(glm::dvec3(0.0,0.0,0.0), glm::dvec3(0.0,1.0,0.0), 1.5);
+  
 };
 
 #endif /* PARTICLES_H */
