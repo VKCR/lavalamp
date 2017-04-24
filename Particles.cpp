@@ -134,7 +134,7 @@ void Particles::step()
   build_spatial_map();
   
   for (Particle &p : particles) {
-    self_collide(p, 100);
+    self_collide(p, 200);
     }
   
   //collisions with cylinder and bottom/top plane

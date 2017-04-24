@@ -1,4 +1,4 @@
-#define OUTPUT_ANIMATION 0
+#define OUTPUT_ANIMATION 1 
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -27,6 +27,8 @@ int frame = 0;
 const int render_step = 3;
 int mx, my;
 
+bool render = false;
+
 Particles particles(5,5,5,0.3);
 
 void display(void);
@@ -37,16 +39,18 @@ void idle(void)
 {
   particles.step();
   glutPostRedisplay();
-  if(frame/render_step >= 300)
-    return;
+  //if(frame/render_step >= 300)
+  //  return;
   if(frame%render_step == 0)
     {
 #if OUTPUT_ANIMATION
+      if (!render)
+	return;
       cv::Mat3b image(height, width);
       glReadPixels(0, 0, width, height, GL_BGR, GL_UNSIGNED_BYTE, image.data);
       cv::flip(image, image, 0);
       char fn[512];
-      sprintf(fn, "result/%04d.png", frame/render_step);
+      sprintf(fn, "result/%06d.png", frame/render_step);
       cv::imwrite(fn, image);
 #endif
     }
@@ -101,7 +105,7 @@ void display(void)
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   gluPerspective(90, 1, 0.01, 100);
-  gluLookAt(dist*sin(phi)*cos(theta), dist*cos(phi), dist*sin(phi)*sin(theta),
+  gluLookAt(8.0 + dist*sin(phi)*cos(theta), dist*cos(phi), dist*sin(phi)*sin(theta),
             0, 0, 0, 
             0, 1, 0);
     
@@ -119,6 +123,9 @@ void mouse(int button, int state, int x, int y)
       mx = x;
       my = y;
     }
+
+  if(button == GLUT_RIGHT_BUTTON)
+    render = (render == false) ? true : false;
 }
 
 void motion(int x, int y)
