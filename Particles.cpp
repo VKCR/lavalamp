@@ -134,7 +134,7 @@ void Particles::step()
   build_spatial_map();
   
   for (Particle &p : particles) {
-    self_collide(p, 200);
+    self_collide(p, 300);
     }
   
   //collisions with cylinder and bottom/top plane
@@ -208,6 +208,7 @@ void Particles::self_collide(Particle &p, double simulation_steps) {
     
     corrs = corrs * (1.0 / ncorrs / simulation_steps);
     p.pos += corrs;
+    //p.last_pos = p.pos - corrs * 2.0;
   }
   //cout<<"what"<<endl;
   //cout<<"whats"<<endl;  
