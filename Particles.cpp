@@ -126,8 +126,6 @@ void Particles::step()
   //-compute inter-particle forces: make it better V
   //-buoyancy: more realistic model
   //-NO NEED TO DO INTER COLLISIONS: JUST DO A REPULSIVE FORCE
-  //-Create a blob wrapper data structure for: 1) color, 2) centroid IMPORTANT if you don't want to recalculate the merging every step
-  //-BUG: merged blob stays merged even if it's super big
 
   //calculate force
   //external forces
@@ -335,7 +333,7 @@ void Particles::update_blobs(){
     set<Particle*> total_particles(b.begin(), b.end());
     bool to_delete = true;
     
-    while(total_particles.size() != 0){
+    while(total_particles.size() != 0){ //connected components algorithm using breadth-first search
       set<Particle*> visited;
       queue<Particle*> to_visit;
       Particle *p = *(total_particles.begin());
