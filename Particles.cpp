@@ -22,14 +22,31 @@ Particles::Particles(int nx, int ny, int nz, float d)
 	  for(int z=0; z<nz; z++)
             {
 	      Particle p;
-	      //p.pos = glm::dvec3((x+0.5-nx*0.5)*d, (y+0.5)*d-1.0, (z+0.5-nz*0.5)*d);
-	      p.pos = glm::dvec3((double)rand() / RAND_MAX - nx*0.5*d, (double)rand() / RAND_MAX * 1.5  - ny*0.5*d + lower_plane.origin.y * 0.5 , (double)rand() / RAND_MAX  - nz*0.5*d );
+	      //p.pos = glm::dvec3((x+0.5-nx*0.5)*d, (y+0.5)*d-5.0, (z+0.5-nz*0.5)*d);
+	      //p.pos = glm::dvec3((double)rand() / RAND_MAX - nx*0.5*d, (double)rand() / RAND_MAX * 1.5  - ny*0.5*d + lower_plane.origin.y * 0.5 , (double)rand() / RAND_MAX  - nz*0.5*d );
+	      p.pos = glm::dvec3((double)rand() / RAND_MAX - nx*0.5*d, lower_plane.origin.y, (double)rand() / RAND_MAX  - nz*0.5*d );
 	      p.last_pos = p.pos;
 	      p.mass = sphere_volume * ext_density;//density(p);
 	      particles.push_back(p);
             }
         }
     }
+
+  //construct blobs
+  
+  vector<Particle*> base_blob;
+
+  for (int i = 0; i < particles.size(); ++i){
+    Particle *pp1 = &particles[i];
+    for (int j = i+1; j < particles.size(); ++j){
+      Particle *pp2 = &particles[j];
+      pp1->linked.insert(pp2);
+      pp2->linked.insert(pp1);
+    }
+    base_blob.push_back(pp1);
+  }
+  blobs.insert(base_blob);
+      
 }
 
 void Particles::render() const
@@ -47,12 +64,12 @@ void Particles::render() const
   glEnable(GL_LIGHT0);
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_COLOR_MATERIAL);
-  glColorMaterial(GL_FRONT, GL_DIFFUSE);
+  /*glColorMaterial(GL_FRONT, GL_DIFFUSE);
   glColor3f(0.2, 0.5, 0.8);
   glColorMaterial(GL_FRONT, GL_SPECULAR);
   glColor3f(0.9, 0.9, 0.9);
   glColorMaterial(GL_FRONT, GL_AMBIENT);
-  glColor3f(0.2, 0.5, 0.8);
+  glColor3f(0.2, 0.5, 0.8);*/
 
   /*draw the two disk extremities*/
   glPushMatrix();
@@ -70,17 +87,34 @@ void Particles::render() const
   gluDisk(quad_top, 0.0, 1.5 + sphere_radius,64, 1);
   gluDeleteQuadric(quad_top);
   glPopMatrix();
+
+    
+  int counta = 1;
+  int countb = 1;
+  int countc = 1;
   
-  
-  
-  for(const Particle &par : particles)
-    {    
-        
+  for (auto b : blobs){
+    for (auto p : b){
       glPushMatrix();
-      glTranslatef(par.pos.x, par.pos.y, par.pos.z);
+
+      glColor3f(0.2 * (counta % 5 + 1) , 0.04 * (countb % 25 + 1), 0.02 * (countc % 50 + 1));
+      
+      
+      glTranslatef(p->pos.x, p->pos.y, p->pos.z);
       glutSolidSphere(sphere_radius, 10, 10);
       glPopMatrix();
-      }
+    }
+    ++counta;
+    countb += 5;
+    countc += 17;
+    //cout<<count<<endl;
+  }/*
+  for(const Particle &par : particles){    
+    glPushMatrix();
+    glTranslatef(par.pos.x, par.pos.y, par.pos.z);
+    glutSolidSphere(sphere_radius, 10, 10);
+    glPopMatrix();
+    }*/
 
     
   glPopAttrib();
@@ -89,11 +123,11 @@ void Particles::render() const
 void Particles::step()
 {
   //TODO
-  //-compute inter-particle forces: make it better
-  //-inter-particle collisions
-  //-fix wall collisions so that the particles keep their momentum. V i think
+  //-compute inter-particle forces: make it better V
   //-buoyancy: more realistic model
-  //-blobs
+  //-NO NEED TO DO INTER COLLISIONS: JUST DO A REPULSIVE FORCE
+  //-Create a blob wrapper data structure for: 1) color, 2) centroid IMPORTANT if you don't want to recalculate the merging every step
+  //-BUG: merged blob stays merged even if it's super big
 
   //calculate force
   //external forces
@@ -102,9 +136,11 @@ void Particles::step()
     //cout<<p.force.y<<endl;
   }
 
+  
+
 
   //inter particle force
-  for (Particle &p1 : particles){ //O(n**2), to change
+  /*for (Particle &p1 : particles){ //O(n**2), to change
     for (Particle &p2 : particles){
       if (&p1 == &p2)
 	continue;
@@ -117,7 +153,30 @@ void Particles::step()
 	p1.force += ks * glm::normalize(p2.pos - p1.pos) * pow(1.0 / d, 2);
 	//}
     }
-  }
+    }*/
+  for (auto b : blobs){
+    for (int i = 0; i < b.size(); ++i){
+      for (int j = i+1; j < b.size(); ++j){
+	Particle *p1 = b[i];
+	Particle *p2 = b[j];
+	double d = glm::length(p1->pos - p2->pos);
+
+	if (d < 0.30){ // repulsion
+	  p1->force -= kr * glm::normalize(p2->pos - p1->pos) * pow(1.0 / 0.30, 6);
+	  p2->force -= kr * glm::normalize(p1->pos - p2->pos) * pow(1.0 / 0.30, 6);
+	}
+	else{ //attraction
+	  p1->force += ka * glm::normalize(p2->pos - p1->pos) * pow(1.0 / d, 2);
+	  p2->force += ka * glm::normalize(p1->pos - p2->pos) * pow(1.0 / d, 2);
+	}
+	//update if link exists or not
+	if (d > blob_thresh){
+	  p1->linked.erase(p2);
+	  p2->linked.erase(p1);
+	}
+      }
+    }
+  }			    
 
   //verlet integration
 
@@ -131,11 +190,11 @@ void Particles::step()
 
 
   //self collisions
-  build_spatial_map();
+  //build_spatial_map();
   
-  for (Particle &p : particles) {
+  /*for (Particle &p : particles) {
     self_collide(p, 300);
-    }
+    }*/
   
   //collisions with cylinder and bottom/top plane
   for (Particle &p : particles){
@@ -146,16 +205,14 @@ void Particles::step()
   }
 
   
-
-  
-
-  
-
   //update the mass of the particles
 
   for (Particle &p : particles){
     p.mass += sphere_volume * density(p);
   }
+
+  update_blobs();
+  cout<<"nblobs = "<<blobs.size()<<endl;
   
 }
 
@@ -210,8 +267,6 @@ void Particles::self_collide(Particle &p, double simulation_steps) {
     p.pos += corrs;
     //p.last_pos = p.pos - corrs * 2.0;
   }
-  //cout<<"what"<<endl;
-  //cout<<"whats"<<endl;  
 
 }
 
@@ -226,14 +281,7 @@ float Particles::hash_position(glm::dvec3 pos) {
   double h = 3.0 * height / num_height_points;
   double t = max(w,t);
 
-  //cout<<w<<endl<<h<<endl<<t<<endl;
-  //cout<<pos.x<<endl<<pos.y<<endl<<pos.z<<endl;
-
-  //Vector3D bbox_index = Vector3D(fmod(pos.x,w) + 1, fmod(pos.y, h) + 1, fmod(pos.z, t) + 1);
   glm::dvec3 bbox_index = glm::dvec3(floor(pos.x/w) , floor(pos.y/h) , floor(pos.z/t) );
-
-  //cout<<bbox_index<<endl<<endl;
-  //return 0;
   
   return abs(bbox_index.x)*1.0  + abs(bbox_index.y)*0.00001 + abs(bbox_index.z)*0.00000001;
 }
@@ -265,7 +313,7 @@ void Particles::cylinder_collision(Cylinder &cy, Particle &p){
 
 //force functions
 double Particles::density(Particle &p){
-  if (p.pos.y - lower_plane.origin.y <= 1.0 / 8.0 * (upper_plane.origin.y - lower_plane.origin.y)){
+  if (p.pos.y - lower_plane.origin.y <= 1.0 / 16.0 * (upper_plane.origin.y - lower_plane.origin.y)){
     return - du_density;
   }else{
     return  dd_density;
@@ -278,4 +326,84 @@ glm::dvec3 Particles::buoyancy(Particle &p){
   return gravity * (p.mass - sphere_volume * ext_density);
 }
 
+
+//blob functions
+void Particles::update_blobs(){
+  vector<vector<Particle*>> to_add;
+  
+  for (auto b : blobs){    
+    set<Particle*> total_particles(b.begin(), b.end());
+    bool to_delete = true;
+    
+    while(total_particles.size() != 0){
+      set<Particle*> visited;
+      queue<Particle*> to_visit;
+      Particle *p = *(total_particles.begin());
+      visited.insert(p);
+      to_visit.push(p);
+      total_particles.erase(p);
+      while (to_visit.size() != 0){
+	p = to_visit.front();
+	to_visit.pop();
+	for (auto pp : p->linked){
+	  if (visited.find(pp) == visited.end()){ //if not in the set
+	    visited.insert(pp);
+	    total_particles.erase(pp);
+	    to_visit.push(pp);
+	  }
+	}
+	
+      }
+      //check, if the number of particles is the same as the total blob
+      if (visited.size() == b.size()){
+	to_delete = false;
+      }
+      else{ //create new blobs
+	vector<Particle*> new_blob(visited.begin(), visited.end());
+	to_add.push_back(new_blob);
+      }
+      
+    }
+    if (to_delete == true){
+	blobs.erase(b);
+    }
+  }
+
+  if (to_add.size() > 0){
+    for (auto b : to_add){
+      blobs.insert(b);
+    }
+  }
+
+  //merge
+  vector<Particle*> merge_blob;
+  
+  for (auto b : blobs){
+    glm::dvec3 centroid;
+    for (auto p : b){
+      centroid += p->pos;
+    }
+    centroid = centroid * ( 1.0 / b.size());
+    
+    if (centroid.y - lower_plane.origin.y <= 1.0 / 16.0 * (upper_plane.origin.y - lower_plane.origin.y)){
+      merge_blob.insert(merge_blob.begin(), b.begin(), b.end());
+      blobs.erase(b);
+    }
+  }
+
+  if (merge_blob.size() > 0){
+     for (int i = 0; i < merge_blob.size(); ++i){
+       Particle *pp1 = merge_blob[i];
+       for (int j = i+1; j < merge_blob.size(); ++j){
+	 Particle *pp2 = merge_blob[j];
+	 pp1->linked.insert(pp2);
+	 pp2->linked.insert(pp1);
+       }
+     }
+     blobs.insert(merge_blob);
+  }
+  
+  
+  
+}
 
