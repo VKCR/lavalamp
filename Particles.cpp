@@ -328,6 +328,7 @@ glm::dvec3 Particles::buoyancy(Particle &p){
 //blob functions
 void Particles::update_blobs(){
   vector<vector<Particle*>> to_add;
+  vector<vector<Particle*>> to_delete_blobs;
   
   for (auto b : blobs){    
     set<Particle*> total_particles(b.begin(), b.end());
@@ -363,16 +364,25 @@ void Particles::update_blobs(){
       
     }
     if (to_delete == true){
-	blobs.erase(b);
-    }
+      to_delete_blobs.push_back(b);
+      //blobs.erase(b);
+    } 
   }
 
+  if (to_delete_blobs.size() > 0){
+    for (auto b : to_delete_blobs){
+      blobs.erase(b);
+    }
+  }
+  
   if (to_add.size() > 0){
     for (auto b : to_add){
       blobs.insert(b);
     }
   }
 
+  
+  
   //merge
   vector<Particle*> merge_blob;
   
