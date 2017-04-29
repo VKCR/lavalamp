@@ -384,6 +384,7 @@ void Particles::update_blobs(){
   
   
   //merge
+  to_delete_blobs.clear();
   vector<Particle*> merge_blob;
   
   for (auto b : blobs){
@@ -395,10 +396,18 @@ void Particles::update_blobs(){
     
     if (centroid.y - lower_plane.origin.y <= 1.0 / 16.0 * (upper_plane.origin.y - lower_plane.origin.y)){
       merge_blob.insert(merge_blob.begin(), b.begin(), b.end());
-      blobs.erase(b);
+      //blobs.erase(b);
+      to_delete_blobs.push_back(b);
     }
   }
 
+
+  if (to_delete_blobs.size() > 0){
+    for (auto b : to_delete_blobs){
+      blobs.erase(b);
+    }
+  }
+  
   if (merge_blob.size() > 0){
      for (int i = 0; i < merge_blob.size(); ++i){
        Particle *pp1 = merge_blob[i];
