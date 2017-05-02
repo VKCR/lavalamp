@@ -108,12 +108,12 @@ void marchingcube(){
     test_blob.clear();
     glm::dvec3 point1 = glm::dvec3(0.1, 0.1, 0.1);
     test_blob.push_back(point1);
-    glm::dvec3 point2 = glm::dvec3(0.4, 0.3, 0.4);
+    glm::dvec3 point2 = glm::dvec3(0.6, 0.6, 0.6);
     test_blob.push_back(point2);
     glm::dvec3 point3 = glm::dvec3(0.9, 0.9, 0.9);
     test_blob.push_back(point3);
-    //glm::dvec3 point4 = glm::dvec3(0.3, 0.3, 0.3);
-    //test_blob.push_back(point4);
+    glm::dvec3 point4 = glm::dvec3(0.3, 0.3, 0.3);
+    test_blob.push_back(point4);
 
     glPushMatrix(); 
     /*
@@ -295,29 +295,12 @@ GLfloat fSample(GLfloat fX, GLfloat fY, GLfloat fZ)
 
         return fResult;
         */
-        //fDx = fX - sSourcePoint[0].fX;
-        /*
-        fDx = fX - test_blob[0].x;
-        fDy = fY - test_blob[0].y;
-        fDz = fZ - test_blob[0].z;
-        fResult += 0.5/(fDx*fDx + fDy*fDy + fDz*fDz);
-
-        fDx = fX - test_blob[1].x;
-        fDy = fY - test_blob[1].y;
-        fDz = fZ - test_blob[1].z;
-        fResult += 1.0/(fDx*fDx + fDy*fDy + fDz*fDz);
-
-        fDx = fX - test_blob[2].x;
-        fDy = fY - test_blob[2].y;
-        fDz = fZ - test_blob[2].z;
-        fResult += 1.5/(fDx*fDx + fDy*fDy + fDz*fDz);
-        */
         
         for (int i = 0; i < test_blob.size(); i++){
        		fDx = fX - test_blob[i].x;
         	fDy = fY - test_blob[i].y;
         	fDz = fZ - test_blob[i].z;
-        	fResult += 1.0/(fDx*fDx + fDy*fDy + fDz*fDz);
+        	fResult += 1.0/(fDx*fDx + fDy*fDy + fDz*fDz); //this changes the "fatness" of the blob
         }
         //std::cout << sSourcePoint.size() << endl;
         return fResult;
