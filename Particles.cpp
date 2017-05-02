@@ -12,6 +12,7 @@
  */
 
 #include "Particles.h"
+#include "MarchingCube.cpp"
 
 Particles::Particles(int nx, int ny, int nz, float d) 
 {
@@ -92,13 +93,14 @@ void Particles::render() const
   int counta = 1;
   int countb = 1;
   int countc = 1;
+
+  marchingcube();
   
-  for (auto b : blobs){
-    for (auto p : b){
+  for (auto b : blobs){ //for each blob
+    for (auto p : b){ //for each particle in a blob
       glPushMatrix();
 
       glColor3f(0.2 * (counta % 5 + 1) , 0.04 * (countb % 25 + 1), 0.02 * (countc % 50 + 1));
-      
       
       glTranslatef(p->pos.x, p->pos.y, p->pos.z);
       glutSolidSphere(sphere_radius, 10, 10);
@@ -116,7 +118,6 @@ void Particles::render() const
     glPopMatrix();
     }*/
 
-    
   glPopAttrib();
 }
 
@@ -210,8 +211,7 @@ void Particles::step()
   }
 
   update_blobs();
-  cout<<"nblobs = "<<blobs.size()<<endl;
-  
+  //cout<<"nblobs = "<<blobs.size()<<endl; //commented this out for now
 }
 
 
@@ -342,8 +342,8 @@ void Particles::update_blobs(){
       to_visit.push(p);
       total_particles.erase(p);
       while (to_visit.size() != 0){
-	p = to_visit.front();
-	to_visit.pop();
+      	p = to_visit.front();
+      	to_visit.pop();
 	for (auto pp : p->linked){
 	  if (visited.find(pp) == visited.end()){ //if not in the set
 	    visited.insert(pp);
@@ -355,7 +355,7 @@ void Particles::update_blobs(){
       }
       //check, if the number of particles is the same as the total blob
       if (visited.size() == b.size()){
-	to_delete = false;
+	       to_delete = false;
       }
       else{ //create new blobs
 	vector<Particle*> new_blob(visited.begin(), visited.end());
