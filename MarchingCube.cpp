@@ -58,21 +58,21 @@ static const GLfloat afSpecularGreen[] = {0.25, 1.00, 0.25, 1.00};
 static const GLfloat afSpecularBlue [] = {0.25, 0.25, 1.00, 1.00}; 
 
 GLenum    ePolygonMode = GL_FILL;
-GLint     iDataSetSize = 16;
+GLint     iDataSetSize = 10; //orig = 16
 GLfloat   fStepSize = 1.0/iDataSetSize;
 GLfloat   fTargetValue = 48.0;
 GLfloat   fTime = 0.0;
-GLvector  sSourcePoint[3];
+//GLvector  sSourcePoint[3];
 vector<glm::dvec3> test_blob;
 
 GLfloat afPropertiesAmbient [] = {0.50, 0.50, 0.50, 1.00}; 
 GLfloat afPropertiesDiffuse [] = {0.75, 0.75, 0.75, 1.00}; 
 GLfloat afPropertiesSpecular[] = {1.00, 1.00, 1.00, 1.00};
 
-GLfloat fSample(GLfloat fX, GLfloat fY, GLfloat fZ);
+//GLfloat fSample(GLfloat fX, GLfloat fY, GLfloat fZ);
 GLvoid MarchCube(GLfloat fX, GLfloat fY, GLfloat fZ, GLfloat fScale);
 
-void marchingcube(){
+void marchingcube(vector<glm::dvec3> blob){
 	//insert marching cube algorithm here
 	glClearColor( 0.0, 0.0, 0.0, 1.0 ); 
     glClearDepth( 1.0 );
@@ -105,15 +105,7 @@ void marchingcube(){
     sSourcePoint[2].fY = 0.8;
     sSourcePoint[2].fZ = 0.8;
     */
-    test_blob.clear();
-    glm::dvec3 point1 = glm::dvec3(0.1, 0.1, 0.1);
-    test_blob.push_back(point1);
-    glm::dvec3 point2 = glm::dvec3(0.6, 0.6, 0.6);
-    test_blob.push_back(point2);
-    glm::dvec3 point3 = glm::dvec3(0.9, 0.9, 0.9);
-    test_blob.push_back(point3);
-    glm::dvec3 point4 = glm::dvec3(0.3, 0.3, 0.3);
-    test_blob.push_back(point4);
+    test_blob = blob;
 
     glPushMatrix(); 
     /*
@@ -139,6 +131,41 @@ void marchingcube(){
         }
     glEnd();
     glPopMatrix(); 
+}
+
+//fSample finds the distance of (fX, fY, fZ) from three moving points //will need to modify this to more than 3
+GLfloat fSample(GLfloat fX, GLfloat fY, GLfloat fZ)
+{
+        GLdouble fResult = 0.0;
+        GLdouble fDx, fDy, fDz;
+        /*
+        fDx = fX - sSourcePoint[0].fX;
+        fDy = fY - sSourcePoint[0].fY;
+        fDz = fZ - sSourcePoint[0].fZ;
+        fResult += 0.5/(fDx*fDx + fDy*fDy + fDz*fDz);
+
+        fDx = fX - sSourcePoint[1].fX;
+        fDy = fY - sSourcePoint[1].fY;
+        fDz = fZ - sSourcePoint[1].fZ;
+        fResult += 1.0/(fDx*fDx + fDy*fDy + fDz*fDz);
+
+        fDx = fX - sSourcePoint[2].fX;
+        fDy = fY - sSourcePoint[2].fY;
+        fDz = fZ - sSourcePoint[2].fZ;
+        fResult += 1.5/(fDx*fDx + fDy*fDy + fDz*fDz);
+
+        return fResult;
+        */
+        
+        for (int i = 0; i < test_blob.size(); i++){
+       		fDx = fX - test_blob[i].x;
+        	fDy = fY - test_blob[i].y;
+        	fDz = fZ - test_blob[i].z;
+        	fResult += 0.5/(fDx*fDx + fDy*fDy + fDz*fDz); //this changes the "fatness" of the blob
+        }
+        //std::cout << sSourcePoint.size() << endl;
+        return fResult;
+
 }
 
 
@@ -269,41 +296,6 @@ GLvoid MarchCube(GLfloat fX, GLfloat fY, GLfloat fZ, GLfloat fScale)
                     glVertex3f(asEdgeVertex[iVertex].fX, asEdgeVertex[iVertex].fY, asEdgeVertex[iVertex].fZ);
             }
     }
-
-}
-
-//fSample finds the distance of (fX, fY, fZ) from three moving points //will need to modify this to more than 3
-GLfloat fSample(GLfloat fX, GLfloat fY, GLfloat fZ)
-{
-        GLdouble fResult = 0.0;
-        GLdouble fDx, fDy, fDz;
-        /*
-        fDx = fX - sSourcePoint[0].fX;
-        fDy = fY - sSourcePoint[0].fY;
-        fDz = fZ - sSourcePoint[0].fZ;
-        fResult += 0.5/(fDx*fDx + fDy*fDy + fDz*fDz);
-
-        fDx = fX - sSourcePoint[1].fX;
-        fDy = fY - sSourcePoint[1].fY;
-        fDz = fZ - sSourcePoint[1].fZ;
-        fResult += 1.0/(fDx*fDx + fDy*fDy + fDz*fDz);
-
-        fDx = fX - sSourcePoint[2].fX;
-        fDy = fY - sSourcePoint[2].fY;
-        fDz = fZ - sSourcePoint[2].fZ;
-        fResult += 1.5/(fDx*fDx + fDy*fDy + fDz*fDz);
-
-        return fResult;
-        */
-        
-        for (int i = 0; i < test_blob.size(); i++){
-       		fDx = fX - test_blob[i].x;
-        	fDy = fY - test_blob[i].y;
-        	fDz = fZ - test_blob[i].z;
-        	fResult += 1.0/(fDx*fDx + fDy*fDy + fDz*fDz); //this changes the "fatness" of the blob
-        }
-        //std::cout << sSourcePoint.size() << endl;
-        return fResult;
 
 }
 

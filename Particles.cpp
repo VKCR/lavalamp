@@ -94,21 +94,24 @@ void Particles::render() const
   int countc = 1;
 
 
-  //jonya's addition
+  //blob addition
   //this is temporary
-  GLvector  sSourcePoint[3];
-  sSourcePoint[0].fX = 0.5;
-  sSourcePoint[0].fY = 0.5;
-  sSourcePoint[0].fZ = 0.5;
-  sSourcePoint[1].fX = 0.4;
-  sSourcePoint[1].fY = 0.3;
-  sSourcePoint[1].fZ = 0.4;
-  sSourcePoint[2].fX = 0.8;
-  sSourcePoint[2].fY = 0.8;
-  sSourcePoint[2].fZ = 0.8;
-  marchingcube();
+  vector<glm::dvec3> test_blob;
+  /*
+  test_blob.clear();
+  glm::dvec3 point1 = glm::dvec3(0.1, 0.1, 0.1);
+  test_blob.push_back(point1);
+  glm::dvec3 point2 = glm::dvec3(0.6, 0.6, 0.6);
+  test_blob.push_back(point2);
+  glm::dvec3 point3 = glm::dvec3(0.9, 0.9, 0.9);
+  test_blob.push_back(point3);
+  glm::dvec3 point4 = glm::dvec3(0.3, 0.3, 0.3);
+  test_blob.push_back(point4);
+  marchingcube(test_blob);
+  */
   
   for (auto b : blobs){ //for each blob
+    test_blob.clear();
     for (auto p : b){ //for each particle in a blob
       glPushMatrix();
       glColor3f(0.2 * (counta % 5 + 1) , 0.04 * (countb % 25 + 1), 0.02 * (countc % 50 + 1));
@@ -117,8 +120,11 @@ void Particles::render() const
       glutSolidSphere(sphere_radius, 10, 10);
       glPopMatrix();
 
-      //do other stuff here
+      //generate blobs!
+      glm::dvec3 point = glm::dvec3(p->pos.x, p->pos.y, p->pos.z);
+      test_blob.push_back(point);
     }
+    marchingcube(test_blob);
     ++counta;
     countb += 5;
     countc += 17;

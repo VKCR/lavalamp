@@ -88,7 +88,7 @@ static const GLfloat afSpecularBlue [] = {0.25, 0.25, 1.00, 1.00};
 
 
 GLenum    ePolygonMode = GL_FILL;
-GLint     iDataSetSize = 16;
+GLint     iDataSetSize = 12;
 GLfloat   fStepSize = 1.0/iDataSetSize;
 GLfloat   fTargetValue = 48.0;
 GLfloat   fTime = 0.0;
@@ -157,7 +157,7 @@ int main(int argc, char **argv)
         glMaterialfv(GL_FRONT, GL_SPECULAR,  afSpecularWhite); 
         glMaterialf( GL_FRONT, GL_SHININESS, 25.0); 
 
-        vResize(iWidth, iHeight); //adjusts the window size
+        //vResize(iWidth, iHeight); //adjusts the window size
 
         vPrintHelp(); //prints help doc
         glutMainLoop(); 
@@ -335,7 +335,7 @@ void vDrawScene()
         glRotatef( -fPitch, 1.0, 0.0, 0.0);
         glRotatef(     0.0, 0.0, 1.0, 0.0);
         glRotatef(    fYaw, 0.0, 0.0, 1.0); //this is the rotation of the wire frame
-/*
+
         //this whole section is for the wire frame
         glPushAttrib(GL_LIGHTING_BIT);
                 glDisable(GL_LIGHTING);
@@ -343,7 +343,6 @@ void vDrawScene()
                 glutWireCube(1.0);
         glPopAttrib();
         //this whole section is for the wire frame
-        */
 
 
         glPushMatrix(); 
@@ -451,17 +450,17 @@ GLfloat fSample1(GLfloat fX, GLfloat fY, GLfloat fZ)
         fDx = fX - sSourcePoint[0].fX;
         fDy = fY - sSourcePoint[0].fY;
         fDz = fZ - sSourcePoint[0].fZ;
-        fResult += 1.0/(fDx*fDx + fDy*fDy + fDz*fDz);
+        fResult += 0.5/(fDx*fDx + fDy*fDy + fDz*fDz);
 
         fDx = fX - sSourcePoint[1].fX;
         fDy = fY - sSourcePoint[1].fY;
         fDz = fZ - sSourcePoint[1].fZ;
-        fResult += 1.0/(fDx*fDx + fDy*fDy + fDz*fDz);
+        fResult += 0.5/(fDx*fDx + fDy*fDy + fDz*fDz);
 
         fDx = fX - sSourcePoint[2].fX;
         fDy = fY - sSourcePoint[2].fY;
         fDz = fZ - sSourcePoint[2].fZ;
-        fResult += 1.0/(fDx*fDx + fDy*fDy + fDz*fDz);
+        fResult += 0.5/(fDx*fDx + fDy*fDy + fDz*fDz);
 
         return fResult;
 }
