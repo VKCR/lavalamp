@@ -88,7 +88,6 @@ void Particles::render() const
   gluDisk(quad_top, 0.0, 1.5 + sphere_radius,64, 1);
   gluDeleteQuadric(quad_top);
   glPopMatrix();
-
     
   int counta = 1;
   int countb = 1;
@@ -99,12 +98,13 @@ void Particles::render() const
   for (auto b : blobs){ //for each blob
     for (auto p : b){ //for each particle in a blob
       glPushMatrix();
-
       glColor3f(0.2 * (counta % 5 + 1) , 0.04 * (countb % 25 + 1), 0.02 * (countc % 50 + 1));
-      
+      //cout << p->pos.z << endl;
       glTranslatef(p->pos.x, p->pos.y, p->pos.z);
       glutSolidSphere(sphere_radius, 10, 10);
       glPopMatrix();
+
+      //do other stuff here
     }
     ++counta;
     countb += 5;

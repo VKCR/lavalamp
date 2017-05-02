@@ -78,7 +78,7 @@ int main(int argc, char** argv)
   glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
   glutInitWindowSize(width, height);
 
-  (void)glutCreateWindow("GLUT Program");
+  (void)glutCreateWindow("Lava Lamp Simulation");
   glutDisplayFunc(display);
   glutReshapeFunc(reshape);
   glutIdleFunc(idle);
@@ -109,7 +109,7 @@ void display(void)
             0, 0, 0, 
             0, 1, 0);
     
-  particles.render();
+  particles.render(); //here's where it renders
 
   glutSwapBuffers();
 }

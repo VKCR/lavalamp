@@ -130,7 +130,7 @@ int main(int argc, char **argv)
         glutInitWindowSize(iWidth, iHeight);
         glutInitDisplayMode( GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE );
         glutCreateWindow( "Marching Cubes" );
-        glutDisplayFunc( vDrawScene );
+        glutDisplayFunc( vDrawScene ); //here's where it displays!! (don't need this bc already inside main?)
         glutIdleFunc( vIdle );
         glutReshapeFunc( vResize );
         glutKeyboardFunc( vKeyboard );
@@ -157,9 +157,9 @@ int main(int argc, char **argv)
         glMaterialfv(GL_FRONT, GL_SPECULAR,  afSpecularWhite); 
         glMaterialf( GL_FRONT, GL_SHININESS, 25.0); 
 
-        vResize(iWidth, iHeight); 
+        vResize(iWidth, iHeight); //adjusts the window size
 
-        vPrintHelp();
+        vPrintHelp(); //prints help doc
         glutMainLoop(); 
 }
 
@@ -315,13 +315,13 @@ void vDrawScene()
         static GLfloat fYaw   = 0.0;
         static GLfloat fTime = 0.0;
 
-        glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT ); 
+        glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT ); //done
 
         glPushMatrix(); 
 
         if(bSpin)
         {
-                fPitch += 2.0;
+                fPitch += 2.0; //don't need this for spinning
                 fYaw   += 1.0;
         }
         if(bMove)
@@ -329,18 +329,20 @@ void vDrawScene()
                 //fTime  = 0.025; //turned off so it doesn't move anymore
         }
 
-        vSetTime(fTime);
+        vSetTime(fTime); //this is where it sets the points
 
         glTranslatef(0.0, 0.0, -1.0);  
         glRotatef( -fPitch, 1.0, 0.0, 0.0);
         glRotatef(     0.0, 0.0, 1.0, 0.0);
         glRotatef(    fYaw, 0.0, 0.0, 1.0); //this is the rotation of the wire frame
 
+        //this whole section is for the wire frame
         glPushAttrib(GL_LIGHTING_BIT);
                 glDisable(GL_LIGHTING);
                 glColor3f(1.0, 1.0, 1.0);
-                glutWireCube(1.0);  //this is the wire frame
+                glutWireCube(1.0);
         glPopAttrib();
+        //this whole section is for the wire frame
 
 
         glPushMatrix(); 
@@ -351,9 +353,9 @@ void vDrawScene()
         glPopMatrix(); 
 
 
-        glPopMatrix(); 
+        glPopMatrix(); //do i need this? 
 
-        glutSwapBuffers(); 
+        glutSwapBuffers(); //do i need this?
 }
 
 //fGetOffset finds the approximate point of intersection of the surface
