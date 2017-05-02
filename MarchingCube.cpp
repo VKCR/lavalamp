@@ -10,6 +10,8 @@
 #include <OpenGL/glu.h>
 #include <GLUT/glut.h>
 
+#include <vector>
+
 using namespace std;
 
 struct GLvector
@@ -42,24 +44,6 @@ static const GLfloat a2fEdgeDirection[12][3] =
         {0.0, 0.0, 1.0},{0.0, 0.0, 1.0},{ 0.0, 0.0, 1.0},{0.0,  0.0, 1.0}
 };
 
-//a2iTetrahedronEdgeConnection lists the index of the endpoint vertices for each of the 6 edges of the tetrahedron
-static const GLint a2iTetrahedronEdgeConnection[6][2] =
-{
-        {0,1},  {1,2},  {2,0},  {0,3},  {1,3},  {2,3}
-};
-
-//a2iTetrahedronEdgeConnection lists the index of verticies from a cube 
-// that made up each of the six tetrahedrons within the cube
-static const GLint a2iTetrahedronsInACube[6][4] =
-{
-        {0,5,1,6},
-        {0,1,2,6},
-        {0,2,3,6},
-        {0,3,7,6},
-        {0,7,4,6},
-        {0,4,5,6},
-};
-
 static const GLfloat afAmbientWhite [] = {0.25, 0.25, 0.25, 1.00}; 
 static const GLfloat afAmbientRed   [] = {0.25, 0.00, 0.00, 1.00}; 
 static const GLfloat afAmbientGreen [] = {0.00, 0.25, 0.00, 1.00}; 
@@ -79,9 +63,7 @@ GLfloat   fStepSize = 1.0/iDataSetSize;
 GLfloat   fTargetValue = 48.0;
 GLfloat   fTime = 0.0;
 GLvector  sSourcePoint[3];
-//GLboolean bSpin = true;
-//GLboolean bMove = true;
-//GLboolean bLight = true;
+vector<glm::dvec3> test_blob;
 
 GLfloat afPropertiesAmbient [] = {0.50, 0.50, 0.50, 1.00}; 
 GLfloat afPropertiesDiffuse [] = {0.75, 0.75, 0.75, 1.00}; 
@@ -112,15 +94,26 @@ void marchingcube(){
     glMaterialf( GL_FRONT, GL_SHININESS, 25.0);  
 
     //this is temporary
-    sSourcePoint[0].fX = 0.5;
-    sSourcePoint[0].fY = 0.5;
-    sSourcePoint[0].fZ = 0.5;
+    /*
+    sSourcePoint[0].fX = 0.1;
+    sSourcePoint[0].fY = 0.1;
+    sSourcePoint[0].fZ = 0.1;
     sSourcePoint[1].fX = 0.4;
     sSourcePoint[1].fY = 0.3;
     sSourcePoint[1].fZ = 0.4;
     sSourcePoint[2].fX = 0.8;
     sSourcePoint[2].fY = 0.8;
     sSourcePoint[2].fZ = 0.8;
+    */
+    test_blob.clear();
+    glm::dvec3 point1 = glm::dvec3(0.1, 0.1, 0.1);
+    test_blob.push_back(point1);
+    glm::dvec3 point2 = glm::dvec3(0.4, 0.3, 0.4);
+    test_blob.push_back(point2);
+    glm::dvec3 point3 = glm::dvec3(0.9, 0.9, 0.9);
+    test_blob.push_back(point3);
+    //glm::dvec3 point4 = glm::dvec3(0.3, 0.3, 0.3);
+    //test_blob.push_back(point4);
 
     glPushMatrix(); 
     /*
@@ -279,11 +272,12 @@ GLvoid MarchCube(GLfloat fX, GLfloat fY, GLfloat fZ, GLfloat fScale)
 
 }
 
-//fSample finds the distance of (fX, fY, fZ) from three moving points
+//fSample finds the distance of (fX, fY, fZ) from three moving points //will need to modify this to more than 3
 GLfloat fSample(GLfloat fX, GLfloat fY, GLfloat fZ)
 {
         GLdouble fResult = 0.0;
         GLdouble fDx, fDy, fDz;
+        /*
         fDx = fX - sSourcePoint[0].fX;
         fDy = fY - sSourcePoint[0].fY;
         fDz = fZ - sSourcePoint[0].fZ;
@@ -300,19 +294,35 @@ GLfloat fSample(GLfloat fX, GLfloat fY, GLfloat fZ)
         fResult += 1.5/(fDx*fDx + fDy*fDy + fDz*fDz);
 
         return fResult;
-}
+        */
+        //fDx = fX - sSourcePoint[0].fX;
+        /*
+        fDx = fX - test_blob[0].x;
+        fDy = fY - test_blob[0].y;
+        fDz = fZ - test_blob[0].z;
+        fResult += 0.5/(fDx*fDx + fDy*fDy + fDz*fDz);
 
-/*
-//vGetNormal() finds the gradient of the scalar field at a point
-//This gradient can be used as a very accurate vertx normal for lighting calculations
-GLvoid vGetNormal(GLvector &rfNormal, GLfloat fX, GLfloat fY, GLfloat fZ)
-{
-        rfNormal.fX = fSample(fX-0.01, fY, fZ) - fSample(fX+0.01, fY, fZ);
-        rfNormal.fY = fSample(fX, fY-0.01, fZ) - fSample(fX, fY+0.01, fZ);
-        rfNormal.fZ = fSample(fX, fY, fZ-0.01) - fSample(fX, fY, fZ+0.01);
-        vNormalizeVector(rfNormal, rfNormal);
+        fDx = fX - test_blob[1].x;
+        fDy = fY - test_blob[1].y;
+        fDz = fZ - test_blob[1].z;
+        fResult += 1.0/(fDx*fDx + fDy*fDy + fDz*fDz);
+
+        fDx = fX - test_blob[2].x;
+        fDy = fY - test_blob[2].y;
+        fDz = fZ - test_blob[2].z;
+        fResult += 1.5/(fDx*fDx + fDy*fDy + fDz*fDz);
+        */
+        
+        for (int i = 0; i < test_blob.size(); i++){
+       		fDx = fX - test_blob[i].x;
+        	fDy = fY - test_blob[i].y;
+        	fDz = fZ - test_blob[i].z;
+        	fResult += 1.0/(fDx*fDx + fDy*fDy + fDz*fDz);
+        }
+        //std::cout << sSourcePoint.size() << endl;
+        return fResult;
+
 }
-*/
 
 // For any edge, if one vertex is inside of the surface and the other is outside of the surface
 //  then the edge intersects the surface

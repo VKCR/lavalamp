@@ -93,6 +93,19 @@ void Particles::render() const
   int countb = 1;
   int countc = 1;
 
+
+  //jonya's addition
+  //this is temporary
+  GLvector  sSourcePoint[3];
+  sSourcePoint[0].fX = 0.5;
+  sSourcePoint[0].fY = 0.5;
+  sSourcePoint[0].fZ = 0.5;
+  sSourcePoint[1].fX = 0.4;
+  sSourcePoint[1].fY = 0.3;
+  sSourcePoint[1].fZ = 0.4;
+  sSourcePoint[2].fX = 0.8;
+  sSourcePoint[2].fY = 0.8;
+  sSourcePoint[2].fZ = 0.8;
   marchingcube();
   
   for (auto b : blobs){ //for each blob

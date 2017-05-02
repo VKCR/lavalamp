@@ -335,7 +335,7 @@ void vDrawScene()
         glRotatef( -fPitch, 1.0, 0.0, 0.0);
         glRotatef(     0.0, 0.0, 1.0, 0.0);
         glRotatef(    fYaw, 0.0, 0.0, 1.0); //this is the rotation of the wire frame
-
+/*
         //this whole section is for the wire frame
         glPushAttrib(GL_LIGHTING_BIT);
                 glDisable(GL_LIGHTING);
@@ -343,6 +343,7 @@ void vDrawScene()
                 glutWireCube(1.0);
         glPopAttrib();
         //this whole section is for the wire frame
+        */
 
 
         glPushMatrix(); 
@@ -422,15 +423,15 @@ GLvoid vSetTime(GLfloat fNewTime)
                 sSourcePoint[iSourceNum].fY = 0.5*iSourceNum;
                 sSourcePoint[iSourceNum].fZ = 0.5*iSourceNum;
         }*/
-        sSourcePoint[0].fX = 0.5;
-        sSourcePoint[0].fY = 0.5;
-        sSourcePoint[0].fZ = 0.5;
+        sSourcePoint[0].fX = 0.1;
+        sSourcePoint[0].fY = 0.1;
+        sSourcePoint[0].fZ = 0.1;
         sSourcePoint[1].fX = 0.4;
-        sSourcePoint[1].fY = 0.3;
+        sSourcePoint[1].fY = 0.4;
         sSourcePoint[1].fZ = 0.4;
-        sSourcePoint[2].fX = 0.8;
-        sSourcePoint[2].fY = 0.8;
-        sSourcePoint[2].fZ = 0.8;
+        sSourcePoint[2].fX = 1;
+        sSourcePoint[2].fY = 1;
+        sSourcePoint[2].fZ = 1;
 
 
         /*
@@ -450,7 +451,7 @@ GLfloat fSample1(GLfloat fX, GLfloat fY, GLfloat fZ)
         fDx = fX - sSourcePoint[0].fX;
         fDy = fY - sSourcePoint[0].fY;
         fDz = fZ - sSourcePoint[0].fZ;
-        fResult += 0.5/(fDx*fDx + fDy*fDy + fDz*fDz);
+        fResult += 1.0/(fDx*fDx + fDy*fDy + fDz*fDz);
 
         fDx = fX - sSourcePoint[1].fX;
         fDy = fY - sSourcePoint[1].fY;
@@ -460,7 +461,7 @@ GLfloat fSample1(GLfloat fX, GLfloat fY, GLfloat fZ)
         fDx = fX - sSourcePoint[2].fX;
         fDy = fY - sSourcePoint[2].fY;
         fDz = fZ - sSourcePoint[2].fZ;
-        fResult += 1.5/(fDx*fDx + fDy*fDy + fDz*fDz);
+        fResult += 1.0/(fDx*fDx + fDy*fDy + fDz*fDz);
 
         return fResult;
 }
