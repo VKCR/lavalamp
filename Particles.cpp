@@ -130,7 +130,7 @@ void Particles::render() const
       glm::dvec3 point = glm::dvec3(p->pos.x, p->pos.y, p->pos.z);
       test_blob.push_back(point);
     }
-    marchingcube(test_blob, red, green, blue);
+    //marchingcube(test_blob, red, green, blue);
     ++counta;
     countb += 5;
     countc += 17;

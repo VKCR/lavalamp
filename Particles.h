@@ -75,16 +75,16 @@ class Particles {
   double sphere_volume = 4.0 / 3.0 * 3.1417 * pow(sphere_radius, 3);
   double ext_density = 1.0;
   double du_density = 0.0000042;
-  double dd_density = 0.0000015;
-  double delta_t = 0.1;
-  double damping = 0.1; //0.2
+  double dd_density = 0.0000205;
+  double delta_t = 0.1; //0.3 for rendering
+  double damping = 0.2; //0.2
   double mass = 1.0;
   double friction = 0.1;
   double SURFACE_OFFSET = 0.00001;
-  double ka = 0.000005;
-  double kr = 0.000003;
+  double ka = 0.000009;
+  double kr = 0.000009;
   double force_thresh = 0.2;
-  double blob_thresh = 0.5;
+  double blob_thresh = 0.3;
   
   glm::dvec3 gravity = glm::dvec3(0.0,-50,0.0);
   
