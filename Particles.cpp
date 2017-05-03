@@ -77,7 +77,7 @@ void Particles::render() const
   glTranslatef(lower_plane.origin.x, lower_plane.origin.y, lower_plane.origin.z);
   glRotatef(90.0, 1.0, 0.0, 0.0);
   GLUquadricObj* quad_bot = gluNewQuadric();
-  gluDisk(quad_bot, 0.0, 1.5  + sphere_radius, 64, 1);
+  gluDisk(quad_bot, 0.0, 0.4  + sphere_radius, 64, 1);
   gluDeleteQuadric(quad_bot);
   glPopMatrix();
 
@@ -85,7 +85,7 @@ void Particles::render() const
   glTranslatef(upper_plane.origin.x, upper_plane.origin.y, upper_plane.origin.z);
   glRotatef(90.0, 1.0, 0.0, 0.0);
   GLUquadricObj* quad_top = gluNewQuadric();
-  gluDisk(quad_top, 0.0, 1.5 + sphere_radius,64, 1);
+  gluDisk(quad_top, 0.0, 0.4 + sphere_radius,64, 1);
   gluDeleteQuadric(quad_top);
   glPopMatrix();
     
@@ -110,11 +110,17 @@ void Particles::render() const
   marchingcube(test_blob);
   */
   
+  GLfloat red;
+  GLfloat blue;
+  GLfloat green;
   for (auto b : blobs){ //for each blob
     test_blob.clear();
     for (auto p : b){ //for each particle in a blob
       glPushMatrix();
-      glColor3f(0.2 * (counta % 5 + 1) , 0.04 * (countb % 25 + 1), 0.02 * (countc % 50 + 1));
+      red = 0.2 * (counta % 5 + 1);
+      green = 0.04 * (countb % 25 + 1);
+      blue = 0.02 * (countc % 50 + 1);
+      glColor3f(red, green, blue);
       //cout << p->pos.z << endl;
       glTranslatef(p->pos.x, p->pos.y, p->pos.z);
       glutSolidSphere(sphere_radius, 10, 10);
@@ -124,7 +130,7 @@ void Particles::render() const
       glm::dvec3 point = glm::dvec3(p->pos.x, p->pos.y, p->pos.z);
       test_blob.push_back(point);
     }
-    marchingcube(test_blob);
+    marchingcube(test_blob, red, green, blue);
     ++counta;
     countb += 5;
     countc += 17;

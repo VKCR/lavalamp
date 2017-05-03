@@ -64,6 +64,9 @@ GLfloat   fTargetValue = 48.0;
 GLfloat   fTime = 0.0;
 //GLvector  sSourcePoint[3];
 vector<glm::dvec3> test_blob;
+GLfloat r;
+GLfloat g;
+GLfloat b;
 
 GLfloat afPropertiesAmbient [] = {0.50, 0.50, 0.50, 1.00}; 
 GLfloat afPropertiesDiffuse [] = {0.75, 0.75, 0.75, 1.00}; 
@@ -72,7 +75,7 @@ GLfloat afPropertiesSpecular[] = {1.00, 1.00, 1.00, 1.00};
 //GLfloat fSample(GLfloat fX, GLfloat fY, GLfloat fZ);
 GLvoid MarchCube(GLfloat fX, GLfloat fY, GLfloat fZ, GLfloat fScale);
 
-void marchingcube(vector<glm::dvec3> blob){
+void marchingcube(vector<glm::dvec3> blob, GLfloat red, GLfloat green, GLfloat blue){
 	//insert marching cube algorithm here
 	glClearColor( 0.0, 0.0, 0.0, 1.0 ); 
     glClearDepth( 1.0 );
@@ -106,12 +109,17 @@ void marchingcube(vector<glm::dvec3> blob){
     sSourcePoint[2].fZ = 0.8;
     */
     test_blob = blob;
+    r = red;
+    g = green;
+    b = blue;
 
+    /*
     glPushAttrib(GL_LIGHTING_BIT);
         glDisable(GL_LIGHTING);
         glColor3f(1.0, 1.0, 1.0);
         glutWireCube(1.0);
     glPopAttrib();
+    */
 
     glPushMatrix(); 
     /*
@@ -125,13 +133,13 @@ void marchingcube(vector<glm::dvec3> blob){
     glTranslatef(0, 0, 0);
     glutSolidSphere(0.5, 10, 10);
     */
-    glTranslatef(-0.5, -0.5, -0.5);
+    //glTranslatef(-0.5, -0.5, -0.5);
     glBegin(GL_TRIANGLES);
         //performs marching cube
     	GLint iX, iY, iZ;
-        for(iX = 0; iX < iDataSetSize; iX++)
+        for(iX = -(iDataSetSize-1.0); iX < iDataSetSize; iX++)
         for(iY = -(iDataSetSize-1.0); iY < iDataSetSize; iY++)
-        for(iZ = 0; iZ < iDataSetSize; iZ++)
+        for(iZ = -(iDataSetSize-1.0); iZ < iDataSetSize; iZ++)
         { //for a single cube
             MarchCube(iX*fStepSize, iY*fStepSize, iZ*fStepSize, fStepSize);
         }
@@ -167,7 +175,7 @@ GLfloat fSample(GLfloat fX, GLfloat fY, GLfloat fZ)
        		fDx = fX - test_blob[i].x;
         	fDy = fY - test_blob[i].y;
         	fDz = fZ - test_blob[i].z;
-        	fResult += 2.0/(fDx*fDx + fDy*fDy + fDz*fDz); //this changes the "fatness" of the blob
+        	fResult += 0.2/(fDx*fDx + fDy*fDy + fDz*fDz); //this changes the "fatness" of the blob
         }
         //std::cout << sSourcePoint.size() << endl;
         return fResult;
@@ -199,9 +207,12 @@ GLvoid vGetColor(GLvector &rfColor, GLvector &rfPosition, GLvector &rfNormal)
         rfColor.fY = (fY > 0.0 ? fY : 0.0) + (fZ < 0.0 ? -0.5*fZ : 0.0) + (fX < 0.0 ? -0.5*fX : 0.0);
         rfColor.fZ = (fZ > 0.0 ? fZ : 0.0) + (fX < 0.0 ? -0.5*fX : 0.0) + (fY < 0.0 ? -0.5*fY : 0.0);
         */
-        rfColor.fX = 1.0;
-        rfColor.fY = 1.0;
-        rfColor.fZ = 1.0;
+        //rfColor.fX = 1.0;
+        //rfColor.fY = 1.0;
+        //rfColor.fZ = 1.0;
+		rfColor.fX = r;
+		rfColor.fY = g;
+		rfColor.fZ = b;
 }
 
 GLvoid vNormalizeVector(GLvector &rfVectorResult, GLvector &rfVectorSource)

@@ -29,7 +29,7 @@ int mx, my;
 
 bool render = false;
 
-Particles particles(3,3,3,0.3);
+Particles particles(3,5,3,0.1);
 
 void display(void);
 
@@ -105,7 +105,7 @@ void display(void)
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   gluPerspective(90, 1, 0.01, 100);
-  gluLookAt(8.0 + dist*sin(phi)*cos(theta), dist*cos(phi), dist*sin(phi)*sin(theta),
+  gluLookAt(1.0 + dist*sin(phi)*cos(theta), dist*cos(phi), dist*sin(phi)*sin(theta),
             0, 0, 0, 
             0, 1, 0);
     

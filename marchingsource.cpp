@@ -346,7 +346,7 @@ void vDrawScene()
 
 
         glPushMatrix(); 
-        glTranslatef(-0.5, -0.5, -0.5);
+        //glTranslatef(-0.5, -0.5, -0.5);
         glColor3f(1.0, 1.0, 1.0);
         glBegin(GL_TRIANGLES);
                 vMarchingCubes(); //performs marching cube
@@ -426,15 +426,15 @@ GLvoid vSetTime(GLfloat fNewTime)
                 sSourcePoint[iSourceNum].fY = 0.5*iSourceNum;
                 sSourcePoint[iSourceNum].fZ = 0.5*iSourceNum;
         }*/
-        sSourcePoint[0].fX = 0.1;
-        sSourcePoint[0].fY = 0.1;
-        sSourcePoint[0].fZ = 0.1;
-        sSourcePoint[1].fX = 0.1;
-        sSourcePoint[1].fY = 0.5;
-        sSourcePoint[1].fZ = 0.1;
-        sSourcePoint[2].fX = 0.1;
-        sSourcePoint[2].fY = -1;
-        sSourcePoint[2].fZ = 0.1;
+        sSourcePoint[0].fX = 0;
+        sSourcePoint[0].fY = 0;
+        sSourcePoint[0].fZ = 0;
+        sSourcePoint[1].fX = 0.4;
+        sSourcePoint[1].fY = 0.4;
+        sSourcePoint[1].fZ = 0.4;
+        sSourcePoint[2].fX = 0.7;
+        sSourcePoint[2].fY = 0.7;
+        sSourcePoint[2].fZ = 0.7;
 
 
         /*
@@ -454,17 +454,17 @@ GLfloat fSample1(GLfloat fX, GLfloat fY, GLfloat fZ)
         fDx = fX - sSourcePoint[0].fX;
         fDy = fY - sSourcePoint[0].fY;
         fDz = fZ - sSourcePoint[0].fZ;
-        fResult += 2/(fDx*fDx + fDy*fDy + fDz*fDz);
+        fResult += 1/(fDx*fDx + fDy*fDy + fDz*fDz);
 
         fDx = fX - sSourcePoint[1].fX;
         fDy = fY - sSourcePoint[1].fY;
         fDz = fZ - sSourcePoint[1].fZ;
-        fResult += 2/(fDx*fDx + fDy*fDy + fDz*fDz);
+        fResult += 1/(fDx*fDx + fDy*fDy + fDz*fDz);
 
         fDx = fX - sSourcePoint[2].fX;
         fDy = fY - sSourcePoint[2].fY;
         fDz = fZ - sSourcePoint[2].fZ;
-        fResult += 2/(fDx*fDx + fDy*fDy + fDz*fDz);
+        fResult += 1/(fDx*fDx + fDy*fDy + fDz*fDz);
 
         return fResult;
 }
