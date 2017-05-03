@@ -74,7 +74,7 @@ class Particles {
   double sphere_radius = 0.04;
   double sphere_volume = 4.0 / 3.0 * 3.1417 * pow(sphere_radius, 3);
   double ext_density = 1.0;
-  double du_density = 0.0000022;
+  double du_density = 0.0000042;
   double dd_density = 0.0000015;
   double delta_t = 0.1;
   double damping = 0.1; //0.2

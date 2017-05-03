@@ -185,7 +185,7 @@ void Particles::step()
 	Particle *p2 = b[j];
 	double d = glm::length(p1->pos - p2->pos);
 
-	if (d < 0.30){ // repulsion
+	if (d < 0.20){ // repulsion
 	  p1->force -= kr * glm::normalize(p2->pos - p1->pos) * pow(1.0 / 0.30, 6);
 	  p2->force -= kr * glm::normalize(p1->pos - p2->pos) * pow(1.0 / 0.30, 6);
 	}
