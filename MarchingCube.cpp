@@ -58,7 +58,7 @@ static const GLfloat afSpecularGreen[] = {0.25, 1.00, 0.25, 1.00};
 static const GLfloat afSpecularBlue [] = {0.25, 0.25, 1.00, 1.00}; 
 
 GLenum    ePolygonMode = GL_FILL;
-GLint     iDataSetSize = 10; //orig = 16
+GLint     iDataSetSize = 16; //orig = 16
 GLfloat   fStepSize = 1.0/iDataSetSize;
 GLfloat   fTargetValue = 48.0;
 GLfloat   fTime = 0.0;
@@ -107,6 +107,12 @@ void marchingcube(vector<glm::dvec3> blob){
     */
     test_blob = blob;
 
+    glPushAttrib(GL_LIGHTING_BIT);
+        glDisable(GL_LIGHTING);
+        glColor3f(1.0, 1.0, 1.0);
+        glutWireCube(1.0);
+    glPopAttrib();
+
     glPushMatrix(); 
     /*
     glTranslatef(-0.5, -0.5, -0.5);
@@ -124,7 +130,7 @@ void marchingcube(vector<glm::dvec3> blob){
         //performs marching cube
     	GLint iX, iY, iZ;
         for(iX = 0; iX < iDataSetSize; iX++)
-        for(iY = 0; iY < iDataSetSize; iY++)
+        for(iY = -(iDataSetSize-1.0); iY < iDataSetSize; iY++)
         for(iZ = 0; iZ < iDataSetSize; iZ++)
         { //for a single cube
             MarchCube(iX*fStepSize, iY*fStepSize, iZ*fStepSize, fStepSize);
@@ -161,7 +167,7 @@ GLfloat fSample(GLfloat fX, GLfloat fY, GLfloat fZ)
        		fDx = fX - test_blob[i].x;
         	fDy = fY - test_blob[i].y;
         	fDz = fZ - test_blob[i].z;
-        	fResult += 0.5/(fDx*fDx + fDy*fDy + fDz*fDz); //this changes the "fatness" of the blob
+        	fResult += 2.0/(fDx*fDx + fDy*fDy + fDz*fDz); //this changes the "fatness" of the blob
         }
         //std::cout << sSourcePoint.size() << endl;
         return fResult;
@@ -185,12 +191,17 @@ GLfloat fGetOffset(GLfloat fValue1, GLfloat fValue2, GLfloat fValueDesired)
 //vGetColor generates a color from a given position and normal of a point
 GLvoid vGetColor(GLvector &rfColor, GLvector &rfPosition, GLvector &rfNormal)
 {
+		/*
         GLfloat fX = rfNormal.fX;
         GLfloat fY = rfNormal.fY;
         GLfloat fZ = rfNormal.fZ;
         rfColor.fX = (fX > 0.0 ? fX : 0.0) + (fY < 0.0 ? -0.5*fY : 0.0) + (fZ < 0.0 ? -0.5*fZ : 0.0);
         rfColor.fY = (fY > 0.0 ? fY : 0.0) + (fZ < 0.0 ? -0.5*fZ : 0.0) + (fX < 0.0 ? -0.5*fX : 0.0);
         rfColor.fZ = (fZ > 0.0 ? fZ : 0.0) + (fX < 0.0 ? -0.5*fX : 0.0) + (fY < 0.0 ? -0.5*fY : 0.0);
+        */
+        rfColor.fX = 1.0;
+        rfColor.fY = 1.0;
+        rfColor.fZ = 1.0;
 }
 
 GLvoid vNormalizeVector(GLvector &rfVectorResult, GLvector &rfVectorSource)

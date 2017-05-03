@@ -88,8 +88,8 @@ static const GLfloat afSpecularBlue [] = {0.25, 0.25, 1.00, 1.00};
 
 
 GLenum    ePolygonMode = GL_FILL;
-GLint     iDataSetSize = 12;
-GLfloat   fStepSize = 1.0/iDataSetSize;
+GLint     iDataSetSize = 16;
+GLfloat   fStepSize = 1.5/iDataSetSize;
 GLfloat   fTargetValue = 48.0;
 GLfloat   fTime = 0.0;
 GLvector  sSourcePoint[3];
@@ -347,6 +347,7 @@ void vDrawScene()
 
         glPushMatrix(); 
         glTranslatef(-0.5, -0.5, -0.5);
+        glColor3f(1.0, 1.0, 1.0);
         glBegin(GL_TRIANGLES);
                 vMarchingCubes(); //performs marching cube
         glEnd();
@@ -378,9 +379,12 @@ GLvoid vGetColor(GLvector &rfColor, GLvector &rfPosition, GLvector &rfNormal)
         GLfloat fX = rfNormal.fX;
         GLfloat fY = rfNormal.fY;
         GLfloat fZ = rfNormal.fZ;
-        rfColor.fX = (fX > 0.0 ? fX : 0.0) + (fY < 0.0 ? -0.5*fY : 0.0) + (fZ < 0.0 ? -0.5*fZ : 0.0);
-        rfColor.fY = (fY > 0.0 ? fY : 0.0) + (fZ < 0.0 ? -0.5*fZ : 0.0) + (fX < 0.0 ? -0.5*fX : 0.0);
-        rfColor.fZ = (fZ > 0.0 ? fZ : 0.0) + (fX < 0.0 ? -0.5*fX : 0.0) + (fY < 0.0 ? -0.5*fY : 0.0);
+        //rfColor.fX = (fX > 0.0 ? fX : 0.0) + (fY < 0.0 ? -0.5*fY : 0.0) + (fZ < 0.0 ? -0.5*fZ : 0.0);
+        //rfColor.fY = (fY > 0.0 ? fY : 0.0) + (fZ < 0.0 ? -0.5*fZ : 0.0) + (fX < 0.0 ? -0.5*fX : 0.0);
+        //rfColor.fZ = (fZ > 0.0 ? fZ : 0.0) + (fX < 0.0 ? -0.5*fX : 0.0) + (fY < 0.0 ? -0.5*fY : 0.0);
+        rfColor.fX = 1.0;
+        rfColor.fY = 1.0;
+        rfColor.fZ = 1.0;
 }
 
 GLvoid vNormalizeVector(GLvector &rfVectorResult, GLvector &rfVectorSource)
@@ -425,12 +429,12 @@ GLvoid vSetTime(GLfloat fNewTime)
         sSourcePoint[0].fX = 0.1;
         sSourcePoint[0].fY = 0.1;
         sSourcePoint[0].fZ = 0.1;
-        sSourcePoint[1].fX = 0.4;
-        sSourcePoint[1].fY = 0.4;
-        sSourcePoint[1].fZ = 0.4;
-        sSourcePoint[2].fX = 1;
-        sSourcePoint[2].fY = 1;
-        sSourcePoint[2].fZ = 1;
+        sSourcePoint[1].fX = 0.1;
+        sSourcePoint[1].fY = 0.5;
+        sSourcePoint[1].fZ = 0.1;
+        sSourcePoint[2].fX = 0.1;
+        sSourcePoint[2].fY = -1;
+        sSourcePoint[2].fZ = 0.1;
 
 
         /*
@@ -450,17 +454,17 @@ GLfloat fSample1(GLfloat fX, GLfloat fY, GLfloat fZ)
         fDx = fX - sSourcePoint[0].fX;
         fDy = fY - sSourcePoint[0].fY;
         fDz = fZ - sSourcePoint[0].fZ;
-        fResult += 0.5/(fDx*fDx + fDy*fDy + fDz*fDz);
+        fResult += 2/(fDx*fDx + fDy*fDy + fDz*fDz);
 
         fDx = fX - sSourcePoint[1].fX;
         fDy = fY - sSourcePoint[1].fY;
         fDz = fZ - sSourcePoint[1].fZ;
-        fResult += 0.5/(fDx*fDx + fDy*fDy + fDz*fDz);
+        fResult += 2/(fDx*fDx + fDy*fDy + fDz*fDz);
 
         fDx = fX - sSourcePoint[2].fX;
         fDy = fY - sSourcePoint[2].fY;
         fDz = fZ - sSourcePoint[2].fZ;
-        fResult += 0.5/(fDx*fDx + fDy*fDy + fDz*fDz);
+        fResult += 2/(fDx*fDx + fDy*fDy + fDz*fDz);
 
         return fResult;
 }
@@ -509,7 +513,7 @@ GLvoid vGetNormal(GLvector &rfNormal, GLfloat fX, GLfloat fY, GLfloat fZ)
 
 
 //vMarchCube1 performs the Marching Cubes algorithm on a single cube
-GLvoid vMarchCube1(GLfloat fX, GLfloat fY, GLfloat fZ, GLfloat fScale)
+GLvoid vMarchCube1(GLfloat fX, GLfloat fY, GLfloat fZ, GLfloat fScale) //this is the marching cube specific algo
 {
         extern GLint aiCubeEdgeFlags[256];
         extern GLint a2iTriangleConnectionTable[256][16];
@@ -641,6 +645,7 @@ GLvoid vMarchTetrahedron(GLvector *pasTetrahedronPosition, GLfloat *pafTetrahedr
 
                         vGetColor(sColor, asEdgeVertex[iVertex], asEdgeNorm[iVertex]);
                         glColor3f(sColor.fX, sColor.fY, sColor.fZ);
+                        glColor3f(1.0, 1.0, 1.0);
                         glNormal3f(asEdgeNorm[iVertex].fX,   asEdgeNorm[iVertex].fY,   asEdgeNorm[iVertex].fZ);
                         glVertex3f(asEdgeVertex[iVertex].fX, asEdgeVertex[iVertex].fY, asEdgeVertex[iVertex].fZ);
                 }
@@ -694,7 +699,7 @@ GLvoid vMarchingCubes()
 {
         GLint iX, iY, iZ;
         for(iX = 0; iX < iDataSetSize; iX++)
-        for(iY = 0; iY < iDataSetSize; iY++)
+        for(iY = -(iDataSetSize-1.0); iY < iDataSetSize; iY++)
         for(iZ = 0; iZ < iDataSetSize; iZ++)
         {
                 vMarchCube(iX*fStepSize, iY*fStepSize, iZ*fStepSize, fStepSize);

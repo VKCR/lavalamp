@@ -29,7 +29,7 @@ int mx, my;
 
 bool render = false;
 
-Particles particles(3,15,3,0.4);
+Particles particles(3,3,3,0.3);
 
 void display(void);
 
