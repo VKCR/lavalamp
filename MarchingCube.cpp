@@ -137,9 +137,9 @@ void marchingcube(vector<glm::dvec3> blob, GLfloat red, GLfloat green, GLfloat b
     glBegin(GL_TRIANGLES);
         //performs marching cube
     	GLint iX, iY, iZ;
-        for(iX = -(iDataSetSize-1.0); iX < iDataSetSize; iX++)
-        for(iY = -(iDataSetSize-1.0); iY < iDataSetSize; iY++)
-        for(iZ = -(iDataSetSize-1.0); iZ < iDataSetSize; iZ++)
+        for(iX = -(iDataSetSize-0.0); iX < iDataSetSize; iX++)
+        for(iY = -(iDataSetSize-0.0); iY < iDataSetSize; iY++)
+        for(iZ = -(iDataSetSize-0.0); iZ < iDataSetSize; iZ++)
         { //for a single cube
             MarchCube(iX*fStepSize, iY*fStepSize, iZ*fStepSize, fStepSize);
         }
