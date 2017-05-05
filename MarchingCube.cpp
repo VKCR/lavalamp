@@ -6,9 +6,17 @@
 #include "math.h"
 #include <iostream>
 
+/*OS X: use these includes instead
+
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
-#include <GLUT/glut.h>
+#include <OpenGL/glut.h>
+
+*/
+
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <GL/glut.h>
 
 #include <vector>
 
