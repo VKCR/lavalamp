@@ -1,4 +1,4 @@
-#define OUTPUT_ANIMATION 1 
+#define OUTPUT_ANIMATION 1
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -44,8 +44,8 @@ void idle(void)
   if(frame%render_step == 0)
     {
 #if OUTPUT_ANIMATION
-      if (!render)
-	return;
+      /*if (!render)
+	return;*/
       cv::Mat3b image(height, width);
       glReadPixels(0, 0, width, height, GL_BGR, GL_UNSIGNED_BYTE, image.data);
       cv::flip(image, image, 0);

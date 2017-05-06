@@ -50,8 +50,11 @@ Particles::Particles(int nx, int ny, int nz, float d)
       
 }
 
-void Particles::render() const
+void Particles::render() 
 {
+  /*if (rendering_step % 1 != 0)
+    return;*/
+  
   GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
   GLfloat mat_shininess[] = { 50.0 };
   GLfloat light_position[] = { 10.0, 10.0, 10.0, 0.0 };
@@ -130,6 +133,7 @@ void Particles::render() const
       glm::dvec3 point = glm::dvec3(p->pos.x, p->pos.y, p->pos.z);
       test_blob.push_back(point);
     }
+    //UNCOMMENT/COMMENT THIS LINE TO ACTIVE/DEACTIVE BLOB RENDERING
     marchingcube(test_blob, red, green, blue);
     ++counta;
     countb += 5;
@@ -144,6 +148,7 @@ void Particles::render() const
     }*/
 
   glPopAttrib();
+  rendering_step++;
 }
 
 void Particles::step()
@@ -328,7 +333,8 @@ void Particles::cylinder_collision(Cylinder &cy, Particle &p){
   if (glm::length(delta) > cy.radius){
     glm::dvec3 tang_p =  glm::normalize(delta) * cy.radius;
     glm::dvec3 corr = tang_p - delta;
-    p.pos = p.last_pos + corr * (1 - friction);
+    //p.pos = p.last_pos + corr * (1 - friction);
+    p.pos = p.last_pos + corr * (1 - friction) + glm::normalize(corr) * 0.0001; //hacky 
     //p.last_pos = p.pos;
   }
 }

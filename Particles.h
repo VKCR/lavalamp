@@ -34,7 +34,7 @@ using namespace std;
 class Particles {
  public:
   Particles(int, int, int, float);
-  void render() const;
+  void render();
   void step(); // simulate one frame
  private:
   struct Particle
@@ -74,19 +74,21 @@ class Particles {
   double sphere_radius = 0.04;
   double sphere_volume = 4.0 / 3.0 * 3.1417 * pow(sphere_radius, 3);
   double ext_density = 1.0;
-  double du_density = 0.0000042;
-  double dd_density = 0.0000705;
+  double du_density = 0.00005;
+  double dd_density = 0.0000055;
   double delta_t = 0.4; //0.3 for rendering
-  double damping = 0.2; //0.2
+  double damping = 2.0; //0.2
   double mass = 1.0;
-  double friction = 0.1;
+  double friction = 0.01;
   double SURFACE_OFFSET = 0.00001;
-  double ka = 0.000009;
-  double kr = 0.000009;
-  double force_thresh = 0.2;
-  double blob_thresh = 0.5;
+  double ka = 0.0000001;
+  double kr = 0.00000005;
+  double force_thresh = 0.08;
+  double blob_thresh = 0.3;
   
   glm::dvec3 gravity = glm::dvec3(0.0,-50,0.0);
+
+  int rendering_step = 0;
   
   //forces and collisions
   double density(Particle &p);
