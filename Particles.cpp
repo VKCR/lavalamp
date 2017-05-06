@@ -134,7 +134,7 @@ void Particles::render()
       test_blob.push_back(point);
     }
     //UNCOMMENT/COMMENT THIS LINE TO ACTIVE/DEACTIVE BLOB RENDERING
-    marchingcube(test_blob, red, green, blue);
+    //marchingcube(test_blob, red, green, blue);
     ++counta;
     countb += 5;
     countc += 17;
